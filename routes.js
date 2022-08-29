@@ -1,11 +1,12 @@
 import express from 'express';
+import { stackController } from './controllers.js';
 
 const stackRouter = express.Router();
 const dictRouter = express.Router();
 
 // FIFO store endpoints
-stackRouter.post('/add', (req, res) => { return res.json('add to stack') });
-stackRouter.get('/', (req, res) => { return res.json('get and delete from stack') });
+stackRouter.post('/add', (req, res) => { stackController.add_to_stack(req, res) });
+stackRouter.get('/', (req, res) => { stackController.get_from_stack(req, res) });
 
 
 // Key-Value store endpoints
