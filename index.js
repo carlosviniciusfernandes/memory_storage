@@ -1,10 +1,14 @@
-const express = require('express')
-const app = express()
-const port = 3000
+import express from 'express';
+import { stackRouter, dictRouter } from './routes.js';
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+const app = express();
+const port = 3000;
+
+app.set('view engine', 'ejs');
+
+app.use('/stack', stackRouter);
+app.use('/dict', dictRouter);
 
 app.listen(port, () => {
   console.log(`Startint server on port: ${port}`)
+});
