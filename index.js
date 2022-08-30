@@ -11,5 +11,5 @@ app.use('/stack', stackRouter);
 app.use('/store', storeRouter);
 
 app.listen(port, () => {
-  console.log(`Startint server on port: ${port}`)
+  console.log(`Starting server on port: ${port}`)
 });
