@@ -13,11 +13,17 @@ class StackController {
     }
 
     get_from_stack(req, res) {
-        const item = this.stack_pile.pop()
-        return res.json(200, {
-            "message": `item [${item}] has been removed from the stack pile`,
-            "stack": this.stack_pile
-        })
+        if (this.stack_pile.length > 0) {
+            const item = this.stack_pile.pop()
+            return res.json(200, {
+                "message": `item [${item}] has been removed from the stack pile`,
+                "stack": this.stack_pile
+            })
+        } else {
+            return res.json(400, {
+                "message": `Empty stack, could not retrieve an item from it`,
+            })
+        }
     }
 
 }

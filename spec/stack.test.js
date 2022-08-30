@@ -53,13 +53,11 @@ describe('When adding an item to a non-empty stack', () => {
 describe('When trying to retrieve an item from an empty stack', () => {
     it('should return and error message', () => {
         request(app)
-            .post('/stack/add')
-            .send(data)
-            .set('Accept', 'application/json')
+            .get('/stack')
             .expect('Content-Type', /json/)
             .expect(400)
             .then((response => {
-                assert(response.body.messae, 'Empty stack, could not retrieve an item from it')
+                assert(response.body.message, 'Empty stack, could not retrieve an item from it')
             }))
     })
 })
