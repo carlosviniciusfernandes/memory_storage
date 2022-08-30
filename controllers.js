@@ -72,4 +72,7 @@ class StoreController {
 const stackController = new StackController()
 const storeController = new StoreController()
 
-export {stackController, storeController}
+module.exports = {
+    stackController,
+    storeController
+}
