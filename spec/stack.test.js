@@ -13,16 +13,18 @@ describe('When adding an item to an empty stack', () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then((response => {
-                assert(response.body.stack, [data.item])
+                assert(response.body.stackSize, 1)
+                assert(response.body.item, item)
             }))
     })
 })
 
 describe('When adding an item to a non-empty stack', () => {
     beforeAll(() => {
+        const existingItem = {item: 'existing item'}
         request(app)
             .post('/stack/add')
-            .send({item: 'existing item'})
+            .send(existingItem)
             .set('Accept', 'application/json')
     })
 
@@ -37,7 +39,8 @@ describe('When adding an item to a non-empty stack', () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then((response => {
-                assert(response.body.stack.length, 2)
+                assert(response.body.stack.stackSize, 2)
+                assert(response.body.item, item)
             }))
 
         request(app)
@@ -46,6 +49,7 @@ describe('When adding an item to a non-empty stack', () => {
             .expect(200)
             .then((response => {
                 assert(response.body.stack.length, 1)
+                assert(response.body.item, existingItem)
             }))
     })
 })

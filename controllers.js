@@ -7,8 +7,9 @@ class StackController {
         const item = req.body.item
         this.stack_pile.push(item)
         return res.json(200, {
-            "message": `item [${item}] has been added to the stack pile`,
-            "stack": this.stack_pile
+            "message": `item has been added to the stack pile`,
+            "stackSize": this.stack_pile.length,
+            "item": item
         })
     }
 
@@ -16,8 +17,9 @@ class StackController {
         if (this.stack_pile.length > 0) {
             const item = this.stack_pile.pop()
             return res.json(200, {
-                "message": `item [${item}] has been removed from the stack pile`,
-                "stack": this.stack_pile
+                "message": `item has been removed from the stack pile`,
+                "stackSize": this.stack_pile.length,
+                "item": item
             })
         } else {
             return res.json(400, {
