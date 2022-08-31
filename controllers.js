@@ -1,38 +1,38 @@
 class StackController {
     constructor() {
-        this.stack_pile = []
+        this.stackPile = []
     }
 
-    _is_item_valid(item) {
+    isItemValid(item) {
         return !(item == null)
     }
 
-    add_to_stack(req, res) {
+    addToStack(req, res) {
         const item = req.body.item
-        if (this._is_item_valid(item)) {
-            this.stack_pile.push(item)
-            return res.json(200, {
+        if (this.isItemValid(item)) {
+            this.stackPile.push(item)
+            return res.status(200).json({
                 "message": `item has been added to the stack pile`,
-                "stackSize": this.stack_pile.length,
+                "stackSize": this.stackPile.length,
                 "item": item
             })
         } else {
-            return res.json(400, {
+            return res.status(400).json({
                 "message": `A valid value for 'item' must be provided`,
             })
         }
     }
 
-    get_from_stack(req, res) {
-        if (this.stack_pile.length > 0) {
-            const item = this.stack_pile.pop()
-            return res.json(200, {
+    getFromStack(req, res) {
+        if (this.stackPile.length > 0) {
+            const item = this.stackPile.pop()
+            return res.status(200).json({
                 "message": `item has been removed from the stack pile`,
-                "stackSize": this.stack_pile.length,
+                "stackSize": this.stackPile.length,
                 "item": item
             })
         } else {
-            return res.json(400, {
+            return res.status(400).json({
                 "message": `Empty stack, could not retrieve an item from it`,
             })
         }
@@ -42,46 +42,64 @@ class StackController {
 
 class StoreController {
     constructor() {
-        this.store_dict = {}
+        this.valueStore = {}
+        this.ttlStore = {}
     }
 
-    _set_time_to_live(key, time) {
-        setTimeout(() => {
-            delete this.store_dict[key]
-        }, time*1000)
+    checkTTL(key, ttlStore, valueStore) {
+        ttlStore[key] = ttlStore[key] - 1
+        if (ttlStore[key] <= 0) {
+            delete valueStore[key]
+            delete ttlStore[key]
+        }
     }
 
-    add_to_store(req, res){
+    setTTL(key, ttl) {
+        this.ttlStore[key] = ttl
+        setInterval(this.checkTTL, 1000, key, this.ttlStore, this.valueStore);
+    }
+
+    isNumeric(num) {
+        return !isNaN(num)
+    }
+
+    addToStore(req, res){
         const key = req.body.key
         const value = req.body.value
         const ttl = req.body.ttl
 
-        this.store_dict[key] = value
+        this.valueStore[key] = value
         let message = `key-value pair {${key}: ${value}} has been set into the store`
 
-        if (ttl != null) {
-            this._set_time_to_live(key, ttl)
+        if (this.isNumeric(ttl)) {
+            this.setTTL(key, ttl)
             message += ` with a time to live of ${ttl} seconds`
         }
-
-        return res.json(200, {
-            "message": message
-        })
+        return res.status(200).json({"message": message})
     }
 
-    get_from_store(req, res){
+    getFromStore(req, res){
         const key = req.params.key
-        const value = this.store_dict[key]
-        return res.json(200, { "value": `${value}` })
+        const value = this.valueStore[key]
+        if (value !== undefined){
+            return res.status(200).json({ "value": `${value}` })
+        } else {
+            return res.status(404).json()
+        }
     }
 
-    delete_from_store(req, res){
+    deleteFromStore(req, res){
         const key = req.params.key
         const value = req.body.value
-        delete this.store_dict[key]
-        return res.json(200, {
-            "message": `key-value pair {${key}: ${value}} has been unset from the store`,
-        })
+        if (this.valueStore[key] !== undefined){
+            delete this.valueStore[key]
+            delete this.ttlStore[key]
+            return res.json(200, {
+                "message": `key-value pair {${key}: ${value}} has been unset from the store`,
+            })
+        } else {
+            return res.status(404).json()
+        }
     }
 }
 
