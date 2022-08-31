@@ -10,10 +10,11 @@ app.use(express.json())
 app.use('/stack', stackRouter);
 app.use('/store', storeRouter);
 
-app.clearStack = () => stackController.stack_pile = []
-app.addToStack = (item) => stackController.stack_pile.push(item)
+app.clearStack = () => stackController.stackPile = []
+app.addToStack = (item) => stackController.stackPile.push(item)
 
-app.clearStore = () => storeController.store_dict = {}
-app.addToStore = (key, value) => storeController.store_dict[key] = value
+app.clearStore = () => storeController.store = {}
+app.addToStore = (item) => storeController.store[item.key] = item.value
+app.setStoreItemTimeout = (key, time) => storeController.setTTL(key, time)
 
 module.exports = app

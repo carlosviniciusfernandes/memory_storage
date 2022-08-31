@@ -8,139 +8,148 @@ beforeEach(() => {
 afterEach(() => {
     jest.runOnlyPendingTimers()
     jest.useRealTimers()
+    app.clearStore()
 })
 
 /* Add use cases */
 describe('When adding a key-value pair to the store', () => {
 
-    describe('without a time to live', () => {
+    describe('missing mandatory params', () => {
+        /* TODO */
+    })
+
+    describe('with invalid params', () => {
+        /* TODO */
+    })
+
+    describe('with valid params', () => {
+        it.each([
+            {
+                key: 'testKey',
+                value: 'testValue'
+            },{
+                key: 'testKeyTTL',
+                value: 'testValueTTL',
+                ttl: 10
+            }
+        ])
+        ('should be setted in the store', async (data) => {
+            const response = await request(app)
+                .post('/store/add')
+                .send(data)
+                .set('Accept', 'application/json')
+            expect(response.statusCode).toBe(200)
+        })
+    })
+
+})
+
+/* Get use cases */
+describe('When getting a key-value from the store by its key', () => {
+
+    describe('with an invalid key', () => {
+        it('should return an error if not found', async () => {
+            const response = await request(app).get(`/store/not-valid-key`)
+            expect(response.statusCode).toBe(404)
+        })
+    })
+
+    describe('with a valid key and no TTL set', () => {
+
         const data = {
             key: 'testKey',
             value: 'testValue'
         }
-
-        it('should be setted in the store', () => {
-            request(app)
-                .post('/store/add')
-                .send(data)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200)
+        beforeEach(() => {
+            app.addToStore(data)
         })
+
+        it('should return its value', async () => {
+            const response = await request(app).get(`/store/${data.key}`)
+            expect(response.statusCode).toBe(200)
+            expect(response.body.value).toBe(data.value)
+        })
+
     })
 
-    describe('with a time to live in seconds', () => {
+    describe('with a valid key and TTL set', () => {
+
         const data = {
             key: 'testKeyTTL',
             value: 'testValueTTL',
             ttl: 10
         }
-
-        it('should be setted in the store', () => {
-            request(app)
-                .post('/store/add')
-                .send(data)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200)
+        beforeEach(() => {
+            app.addToStore(data)
+            app.setStoreItemTimeout(data.key, data.ttl)
         })
+
+        it('should return its value within its TTL', async () => {
+            const response = await request(app).get(`/store/${data.key}`)
+            expect(response.statusCode).toBe(200)
+            expect(response.body.value).toBe(data.value)
+        })
+
+        it('should not be found after TTL times out', async () => {
+            jest.advanceTimersByTime(data.ttl*1000) // This ensures the time to live times out
+            const response = await request(app).get(`/store/${data.key}`)
+            expect(response.statusCode).toBe(404)
+        })
+
     })
 
 })
 
-/* Retrieve use cases */
-describe('When getting a key-value with no TTL from the store by its key', () => {
-
-    const data = {
-        key: 'testKey',
-        value: 'testValue'
-    }
-
-    beforeEach(() => {
-        request(app)
-            .post('/store/add')
-            .send(data)
-            .set('Accept', 'application/json')
-    })
-
-    it('should return its value', () => {
-        request(app)
-            .get(`/store/${data.key}`)
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .then((response => {
-                assert(response.body.value, data.value)
-            }))
-    })
-
-})
-
-describe('When getting a key-value with TTL from the store by its key', () => {
-
-    const data = {
-        key: 'testKeyTTL',
-        value: 'testValueTTL',
-        ttl: 10
-    }
-
-    beforeEach(() => {
-        request(app)
-            .post('/store/add')
-            .send(data)
-            .set('Accept', 'application/json')
-    })
-
-    it('should return its value within its TTL', () => {
-        request(app)
-            .get(`/store/${data.key}`)
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .then((response => {
-                assert(response.body.value, data.value)
-            }))
-    })
-
-    it('should not be found after TTL times out', () => {
-        jest.runAllTimers() // This ensures the time to live times out
-        request(app)
-            .get(`/store/${data.key}`)
-            .expect('Content-Type', /json/)
-            .expect(404)
-    })
-
-})
-
-/* Update use case */
+/* 'Update' use cases - In reallity it hit the add enpoint and overwrites existing data */
 describe('When adding a key-value pair to the store', () => {
 
-    describe('if the key already exists', () => {
+    describe('if the key already exists without a TTL', () => {
 
+        const oldData = {
+            key: 'testKey',
+            value: 'testValueOld'
+        }
         beforeEach(() => {
-            const oldData = {
-                key: 'testKey',
-                value: 'testValueOld'
-            }
-            request(app)
-                .post('/store/add')
-                .send(oldData)
-                .set('Accept', 'application/json')
+            app.addToStore(oldData)
         })
 
-        it('should have its value updated in the store', () => {
-            const newData = {
-                key: 'testKey',
-                value: 'testValueNew'
-            }
-            request(app)
-                .post('/store/add')
-                .send(newData)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200)
+        describe('and a TTL is not set for new value', () => {
+            it('should just have its value updated in the store', async () => {
+                /* TODO */
+            })
         })
+
+        describe('and a TTL is set for new value', () => {
+            it('should have its value updated and TTL set in the store', async () => {
+                const newData = {
+                    key: 'testKey',
+                    value: 'testValueNew'
+                }
+                const response = await request(app)
+                    .post('/store/add')
+                    .send(newData)
+                    .set('Accept', 'application/json')
+                expect(response.statusCode).toBe(200)
+            })
+        })
+
 
     })
 
+    describe('if the key already exists with a TTL', () => {
+
+        describe('and a TTL is not set for new value', () => {
+            it('should have its value updated and TTL removed from the store', async () => {
+                /* TODO */
+            })
+        })
+
+        describe('and a TTL is set for new value', () => {
+            it('should have its value and TTL updated in the store', async () => {
+                /* TODO */
+            })
+        })
+    })
 })
 
 /* Delete use cases*/
@@ -150,25 +159,17 @@ describe('When deleting a key-value by its key', () => {
         key: 'testKey',
         value: 'testValue'
     }
-
     beforeEach(() => {
-        request(app)
-            .post('/store/add')
-            .send(data)
-            .set('Accept', 'application/json')
+        app.addToStore(data)
     })
 
-    it('should be deleted if it exists', () => {
-        request(app)
-            .delete(`/store/${data.key}`)
-            .expect('Content-Type', /json/)
-            .expect(200)
+    it('should be deleted if it exists', async () => {
+        const response = await request(app).delete(`/store/${data.key}`)
+        expect(response.statusCode).toBe(200)
     })
 
-    it('should return an error if not found', () => {
-        request(app)
-            .delete(`/store/${data.key}`)
-            .expect('Content-Type', /json/)
-            .expect(404)
+    it('should return an error if not found', async () => {
+        const response = await request(app).delete(`/store/not-${data.key}`)
+        expect(response.statusCode).toBe(404)
     })
 })
