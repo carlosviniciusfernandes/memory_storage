@@ -10,6 +10,7 @@ afterEach(() => {
     jest.useRealTimers()
 })
 
+/* Add use cases */
 describe('When adding a key-value pair to the store', () => {
 
     describe('without a time to live', () => {
@@ -45,36 +46,9 @@ describe('When adding a key-value pair to the store', () => {
         })
     })
 
-    describe('if the key already exists', () => {
-
-        beforeEach(() => {
-            const oldData = {
-                key: 'testKey',
-                value: 'testValueOld'
-            }
-            request(app)
-                .post('/store/add')
-                .send(oldData)
-                .set('Accept', 'application/json')
-        })
-
-        it('should have its value updated in the store', () => {
-            const newData = {
-                key: 'testKey',
-                value: 'testValueNew'
-            }
-            request(app)
-                .post('/store/add')
-                .send(newData)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200)
-        })
-
-    })
-
 })
 
+/* Retrieve use cases */
 describe('When getting a key-value with no TTL from the store by its key', () => {
 
     const data = {
@@ -136,6 +110,40 @@ describe('When getting a key-value with TTL from the store by its key', () => {
 
 })
 
+/* Update use case */
+describe('When adding a key-value pair to the store', () => {
+
+    describe('if the key already exists', () => {
+
+        beforeEach(() => {
+            const oldData = {
+                key: 'testKey',
+                value: 'testValueOld'
+            }
+            request(app)
+                .post('/store/add')
+                .send(oldData)
+                .set('Accept', 'application/json')
+        })
+
+        it('should have its value updated in the store', () => {
+            const newData = {
+                key: 'testKey',
+                value: 'testValueNew'
+            }
+            request(app)
+                .post('/store/add')
+                .send(newData)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+        })
+
+    })
+
+})
+
+/* Delete use cases*/
 describe('When deleting a key-value by its key', () => {
 
     const data = {

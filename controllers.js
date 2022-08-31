@@ -55,8 +55,7 @@ class StoreController {
         }
 
         return res.json(200, {
-            "message": message,
-            "store": this.store_dict
+            "message": message
         })
     }
 
@@ -72,7 +71,6 @@ class StoreController {
         delete this.store_dict[key]
         return res.json(200, {
             "message": `key-value pair {${key}: ${value}} has been unset from the store`,
-            "store": this.store_dict
         })
     }
 }
