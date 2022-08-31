@@ -3,14 +3,24 @@ class StackController {
         this.stack_pile = []
     }
 
+    _is_item_valid(item) {
+        return !(item == null)
+    }
+
     add_to_stack(req, res) {
         const item = req.body.item
-        this.stack_pile.push(item)
-        return res.json(200, {
-            "message": `item has been added to the stack pile`,
-            "stackSize": this.stack_pile.length,
-            "item": item
-        })
+        if (this._is_item_valid(item)) {
+            this.stack_pile.push(item)
+            return res.json(200, {
+                "message": `item has been added to the stack pile`,
+                "stackSize": this.stack_pile.length,
+                "item": item
+            })
+        } else {
+            return res.json(400, {
+                "message": `A valid value for 'item' must be provided`,
+            })
+        }
     }
 
     get_from_stack(req, res) {
