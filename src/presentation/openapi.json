@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "TMG NodeJS Test",
-    "description": "This is a backend code challenge to build an simple API developed using the ExpressJS framework",
+    "description": "This is a backend code challenge to build a simple API developed using the ExpressJS framework",
     "contact": {
       "email": "carlos.fernandes@pyyne.com"
     },
