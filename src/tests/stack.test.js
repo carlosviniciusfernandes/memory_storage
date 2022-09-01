@@ -1,9 +1,9 @@
 const request = require('supertest');
-const app = require('../app');
-const inMemoryStorage = require('../providers.js')
+const app = require('../main/app');
+const inMemoryStack = require('../data/providers/stackProvider')
 
 afterEach(() => {
-    inMemoryStorage.clearStack()
+    inMemoryStack.clearStack()
 })
 
 /* Get from stack use cases */
@@ -11,8 +11,8 @@ describe('When trying to retrieve an item', () => {
 
     describe('from a non-empty stack', () => {
         beforeEach(() => {
-            inMemoryStorage.pushToStack('first item')
-            inMemoryStorage.pushToStack('last item')
+            inMemoryStack.pushToStack('first item')
+            inMemoryStack.pushToStack('last item')
         })
         it('should return the last item and remove it from the stack', async () => {
             response = await request(app).get('/stack')
@@ -51,7 +51,7 @@ describe('When adding an item', () => {
 
     describe('to a non-empty stack', () => {
         beforeEach(() => {
-            inMemoryStorage.pushToStack('existing item')
+            inMemoryStack.pushToStack('existing item')
         })
 
         it('should pile up the new item to the stack', async () => {

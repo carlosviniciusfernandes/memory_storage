@@ -1,6 +1,5 @@
-class InMemoryStorage {
+class InMemoryStore {
     constructor() {
-        this.stackPile = []
         this.valueStore = {}
         this.ttlStore = {}
     }
@@ -16,22 +15,6 @@ class InMemoryStorage {
     setTTL(key, ttl){
         this.ttlStore[key] = ttl
         setInterval(this.checkTTL, 1000, key, this.ttlStore, this.valueStore);
-    }
-
-    pushToStack(item) {
-        this.stackPile.push(item)
-    }
-
-    popFromStack() {
-        return this.stackPile.pop()
-    }
-
-    getStackSize() {
-        return this.stackPile.length
-    }
-
-    clearStack() {
-        this.stackPile = []
     }
 
     setToStore(key, value, ttl = null) {
@@ -54,6 +37,6 @@ class InMemoryStorage {
     }
 }
 
-const inMemoryStorage = new InMemoryStorage()
+const inMemoryStore = new InMemoryStore()
 
-module.exports = inMemoryStorage
+module.exports = inMemoryStore

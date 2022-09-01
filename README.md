@@ -21,7 +21,7 @@ The API operates on two unrelated pieces of functionality, one is a in memory st
 
 The design choices was to go with a simple approach, with two separate controllers for the distinct pieces of memory storage functionality.
 
-The data it self is stored on a instance of the `InMemoryStorage` class during run time, working like a Singleton like object.
+The data itself is stored on the instances of `InMemoryStack` and `InMemoryStore` classes during run time, working like a Singleton like objects.
 
 For the key-value memory storage, an additional object was created to store the optional _Time To Live_ (TTL). Once something is stored with a valid TTL, a routine will run every one second, subtract a second from the TTL and check if its reached zero, then unset the value from the storage if needed.
 
@@ -31,7 +31,7 @@ For the key-value memory storage, an additional object was created to store the 
 ### Serving the Express APP
 To start the app, run the following command:
 
-> npm install
+> npm start
 
 this will expose the API to the address http://localhost:3000
 
@@ -148,4 +148,4 @@ The tests are using `Jest` as the test runner. To run the test, execute the foll
 ---
 ## Next Steps
 - Use of TypeScript
-- Create a interface for the in memory storage provider to be used by the controllers
+- Create interfaces for the memory storage providers to be used by the controllers
