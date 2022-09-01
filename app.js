@@ -10,9 +10,6 @@ app.use(express.json())
 app.use('/stack', stackRouter);
 app.use('/store', storeRouter);
 
-app.clearStack = () => stackController.stackPile = []
-app.addToStack = (item) => stackController.stackPile.push(item)
-
 app.clearStore = () => storeController.store = {}
 app.addToStore = (item) => storeController.store[item.key] = item.value
 app.setStoreItemTimeout = (key, time) => storeController.setTTL(key, time)
