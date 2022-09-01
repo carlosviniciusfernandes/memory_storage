@@ -13,7 +13,7 @@ class InMemoryStorage {
         }
     }
 
-    setTTL(ttl){
+    setTTL(key, ttl){
         this.ttlStore[key] = ttl
         setInterval(this.checkTTL, 1000, key, this.ttlStore, this.valueStore);
     }
