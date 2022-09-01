@@ -1,6 +1,8 @@
+const inMemoryStorage = require('./providers.js')
+
 class StackController {
-    constructor() {
-        this.stackPile = []
+    constructor(storage) {
+        this.storage = storage
     }
 
     isItemValid(item) {
@@ -10,10 +12,10 @@ class StackController {
     addToStack(req, res) {
         const item = req.body.item
         if (this.isItemValid(item)) {
-            this.stackPile.push(item)
+            this.storage.pushToStack(item)
             return res.status(200).json({
                 "message": `item has been added to the stack pile`,
-                "stackSize": this.stackPile.length,
+                "stackSize": this.storage.getStackSize(),
                 "item": item
             })
         } else {
@@ -24,11 +26,11 @@ class StackController {
     }
 
     getFromStack(req, res) {
-        if (this.stackPile.length > 0) {
-            const item = this.stackPile.pop()
+        if (this.storage.getStackSize() > 0) {
+            const item = this.storage.popFromStack()
             return res.status(200).json({
                 "message": `item has been removed from the stack pile`,
-                "stackSize": this.stackPile.length,
+                "stackSize": this.storage.getStackSize(),
                 "item": item
             })
         } else {
@@ -41,7 +43,8 @@ class StackController {
 }
 
 class StoreController {
-    constructor() {
+    constructor(storage) {
+        this.storage = storage
         this.valueStore = {}
         this.ttlStore = {}
     }
@@ -116,8 +119,8 @@ class StoreController {
     }
 }
 
-const stackController = new StackController()
-const storeController = new StoreController()
+const stackController = new StackController(inMemoryStorage)
+const storeController = new StoreController(inMemoryStorage)
 
 module.exports = {
     stackController,
