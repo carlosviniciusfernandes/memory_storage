@@ -25,7 +25,7 @@ The data itself is stored on the instances of `InMemoryStack` and `InMemoryStore
 
 For the key-value memory storage, an additional object was created to store the optional _Time To Live_ (TTL). Once something is stored with a valid TTL, a routine will run every one second, subtract a second from the TTL and check if its reached zero, then unset the value from the storage if needed.
 
-<img src="./design.png" alt="Design"/>
+<img src="./class_diagram.png" alt="Class Diagram"/>
 
 
 ### Serving the Express APP
