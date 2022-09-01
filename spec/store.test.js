@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../app');
+const inMemoryStorage = require('../providers.js')
 
 beforeEach(() => {
     jest.useFakeTimers()
@@ -8,7 +9,7 @@ beforeEach(() => {
 afterEach(() => {
     jest.runOnlyPendingTimers()
     jest.useRealTimers()
-    app.clearStore()
+    inMemoryStorage.clearStore()
 })
 
 /* Add use cases */
@@ -63,11 +64,6 @@ describe('When adding a key-value pair to the store', () => {
                 key: 'testKeyTTL',
                 value: 'testValueTTL',
                 ttl: '10'
-            },
-            {
-                key: 'testKeyTTL',
-                value: 'testValueTTL',
-                ttl: '10'
             }
         ])
         ('should be setted in the store', async (data) => {
@@ -99,7 +95,7 @@ describe('When getting a key-value from the store by its key', () => {
             value: 'testValue'
         }
         beforeEach(() => {
-            app.addToStore(data)
+            inMemoryStorage.setToStore(data.key, data.value)
         })
 
         it('should return its value', async () => {
@@ -118,8 +114,7 @@ describe('When getting a key-value from the store by its key', () => {
             ttl: 10
         }
         beforeEach(() => {
-            app.addToStore(data)
-            app.setStoreItemTimeout(data.key, data.ttl)
+            inMemoryStorage.setToStore(data.key, data.value)
         })
 
         it('should return its value within its TTL', async () => {
@@ -148,7 +143,7 @@ describe('When adding a key-value pair to the store', () => {
             value: 'testValueOld'
         }
         beforeEach(() => {
-            app.addToStore(oldData)
+            inMemoryStorage.setToStore(oldData.key, oldData.value)
         })
 
         describe('and a TTL is not set for new value', () => {
@@ -193,8 +188,7 @@ describe('When adding a key-value pair to the store', () => {
             ttl: 10
         }
         beforeEach(() => {
-            app.addToStore(oldData)
-            app.setStoreItemTimeout(oldData.key, oldData.ttl)
+            inMemoryStorage.setToStore(oldData.key, oldData.value, oldData.ttl)
         })
 
         describe('and a TTL is not set for new value', () => {
@@ -243,7 +237,7 @@ describe('When deleting a key-value by its key', () => {
         value: 'testValue'
     }
     beforeEach(() => {
-        app.addToStore(data)
+        inMemoryStorage.setToStore(data.key, data.value)
     })
 
     it('should be deleted if it exists', async () => {
