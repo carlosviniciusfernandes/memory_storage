@@ -68,13 +68,26 @@ class StoreController {
         const value = req.body.value
         const ttl = req.body.ttl
 
+        if (key == null || !typeof key == 'string') {
+            return res.status(400).json({"message": `Validation error. Make sure 'key' it is a valid string`})
+        }
+
+        if (value === undefined) {
+            return res.status(400).json({"message": `Validation error. Make sure that 'value' is not undefined`})
+        }
+
+        if (ttl !== undefined) {
+            if (ttl && this.isNumeric(ttl)) {
+                this.setTTL(key, ttl)
+            } else {
+                return res.status(400).json({"message": `Validation error. TTL must be a numerical value`})
+            }
+        }
+
         this.valueStore[key] = value
         let message = `key-value pair {${key}: ${value}} has been set into the store`
+        if (ttl) message += ` with a time to live of ${ttl} seconds`
 
-        if (this.isNumeric(ttl)) {
-            this.setTTL(key, ttl)
-            message += ` with a time to live of ${ttl} seconds`
-        }
         return res.status(200).json({"message": message})
     }
 
