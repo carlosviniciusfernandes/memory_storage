@@ -14,12 +14,38 @@ afterEach(() => {
 /* Add use cases */
 describe('When adding a key-value pair to the store', () => {
 
-    describe('missing mandatory params', () => {
-        /* TODO */
-    })
+    describe('with missing or invalid params', () => {
 
-    describe('with invalid params', () => {
-        /* TODO */
+        it.each([
+            null,
+            "",
+            {},
+            {
+                notKey: 'testKey',
+                value: 'testValue'
+            },
+            {
+                key: 'testKey',
+                notValue: 'testValue'
+            },
+            {
+                key: 'testKey',
+                value: 'testValue',
+                ttl: null
+            },
+            {
+                key: 'testKey',
+                value: 'testValue',
+                ttl: 'not numerical value'
+            }
+
+        ])('should return an error', async(data) => {
+            const response = await request(app)
+                .post('/store/add')
+                .send(data)
+                .set('Accept', 'application/json')
+            expect(response.statusCode).toBe(400)
+        })
     })
 
     describe('with valid params', () => {
@@ -27,10 +53,21 @@ describe('When adding a key-value pair to the store', () => {
             {
                 key: 'testKey',
                 value: 'testValue'
-            },{
+            },
+            {
                 key: 'testKeyTTL',
                 value: 'testValueTTL',
                 ttl: 10
+            },
+            {
+                key: 'testKeyTTL',
+                value: 'testValueTTL',
+                ttl: '10'
+            },
+            {
+                key: 'testKeyTTL',
+                value: 'testValueTTL',
+                ttl: '10'
             }
         ])
         ('should be setted in the store', async (data) => {
@@ -40,6 +77,7 @@ describe('When adding a key-value pair to the store', () => {
                 .set('Accept', 'application/json')
             expect(response.statusCode).toBe(200)
         })
+
     })
 
 })
@@ -100,7 +138,7 @@ describe('When getting a key-value from the store by its key', () => {
 
 })
 
-/* 'Update' use cases - In reallity it hit the add enpoint and overwrites existing data */
+/* 'Update' use cases - In reallity it hit the add endpoint and overwrittes existing data */
 describe('When adding a key-value pair to the store', () => {
 
     describe('if the key already exists without a TTL', () => {
@@ -114,16 +152,27 @@ describe('When adding a key-value pair to the store', () => {
         })
 
         describe('and a TTL is not set for new value', () => {
+
             it('should just have its value updated in the store', async () => {
-                /* TODO */
+                const newData = {
+                    key: 'testKey',
+                    value: 'testValueNew'
+                }
+                let response = await request(app)
+                    .post('/store/add')
+                    .send(newData)
+                    .set('Accept', 'application/json')
+                expect(response.statusCode).toBe(200)
             })
         })
 
         describe('and a TTL is set for new value', () => {
+
             it('should have its value updated and TTL set in the store', async () => {
                 const newData = {
                     key: 'testKey',
-                    value: 'testValueNew'
+                    value: 'testValueNew',
+                    ttl: 10
                 }
                 const response = await request(app)
                     .post('/store/add')
@@ -138,18 +187,52 @@ describe('When adding a key-value pair to the store', () => {
 
     describe('if the key already exists with a TTL', () => {
 
+        const oldData = {
+            key: 'testKey',
+            value: 'testValueOld',
+            ttl: 10
+        }
+        beforeEach(() => {
+            app.addToStore(oldData)
+            app.setStoreItemTimeout(oldData.key, oldData.ttl)
+        })
+
         describe('and a TTL is not set for new value', () => {
+
             it('should have its value updated and TTL removed from the store', async () => {
-                /* TODO */
+                const newData = {
+                    key: 'testKey',
+                    value: 'testValueNew'
+                }
+                let response = await request(app)
+                    .post('/store/add')
+                    .send(newData)
+                    .set('Accept', 'application/json')
+                expect(response.statusCode).toBe(200)
             })
+
+
         })
 
         describe('and a TTL is set for new value', () => {
+
             it('should have its value and TTL updated in the store', async () => {
-                /* TODO */
+                const newData = {
+                    key: 'testKey',
+                    value: 'testValueNew',
+                    ttl: 20
+                }
+                let response = await request(app)
+                .post('/store/add')
+                .send(newData)
+                .set('Accept', 'application/json')
+                expect(response.statusCode).toBe(200)
             })
+
         })
+
     })
+
 })
 
 /* Delete use cases*/
