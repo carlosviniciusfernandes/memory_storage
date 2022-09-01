@@ -1,47 +1,3 @@
-const inMemoryStorage = require('./providers.js')
-
-class StackController {
-    constructor(storage) {
-        this.storage = storage
-    }
-
-    isItemValid(item) {
-        return !(item == null)
-    }
-
-    addToStack(req, res) {
-        const item = req.body.item
-        if (this.isItemValid(item)) {
-            this.storage.pushToStack(item)
-            return res.status(200).json({
-                "message": `item has been added to the stack pile`,
-                "stackSize": this.storage.getStackSize(),
-                "item": item
-            })
-        } else {
-            return res.status(400).json({
-                "message": `A valid value for 'item' must be provided`,
-            })
-        }
-    }
-
-    getFromStack(req, res) {
-        if (this.storage.getStackSize() > 0) {
-            const item = this.storage.popFromStack()
-            return res.status(200).json({
-                "message": `item has been removed from the stack pile`,
-                "stackSize": this.storage.getStackSize(),
-                "item": item
-            })
-        } else {
-            return res.status(400).json({
-                "message": `Empty stack, could not retrieve an item from it`,
-            })
-        }
-    }
-
-}
-
 class StoreController {
     constructor(storage) {
         this.storage = storage
@@ -88,10 +44,10 @@ class StoreController {
 
     deleteFromStore(req, res){
         const key = req.params.key
-        const value = req.body.value
-        if (this.storage.getFromStore(key) !== undefined){
+        const value = this.storage.getFromStore(key)
+        if (value !== undefined){
             this.storage.unsetFromStore(key)
-            return res.json(200, {
+            return res.status(200).json({
                 "message": `key-value pair {${key}: ${value}} has been unset from the store`,
             })
         } else {
@@ -100,10 +56,4 @@ class StoreController {
     }
 }
 
-const stackController = new StackController(inMemoryStorage)
-const storeController = new StoreController(inMemoryStorage)
-
-module.exports = {
-    stackController,
-    storeController
-}
+module.exports = StoreController

@@ -1,0 +1,281 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TMG NodeJS Test",
+    "description": "This is a backend code challenge by the `The Meet Group` to build an simple API developed using the ExpressJS framework",
+    "contact": {
+      "email": "carlos.fernandes@pyyne.com"
+    },
+    "license": {
+      "name": "MIT"
+    },
+    "version": "1.0.11"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "stack",
+      "description": "An In memory stack pile of given values"
+    },
+    {
+      "name": "store",
+      "description": "An In memory store of key-valueswith optional time to live"
+    }
+  ],
+  "paths": {
+    "/stack": {
+      "get": {
+        "tags": [
+          "stack"
+        ],
+        "description": "Retrieves an item from the top of the stack. It  also deletes the item from the top of the stack",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stack"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Empty Stack",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyStack"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stack/add": {
+      "post": {
+        "tags": [
+          "stack"
+        ],
+        "description": "Add an item to the top of the stack",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToStack"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stack"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddToStackError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store/add": {
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "description": "Add a key-value pair do the store",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToSore"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddToStoreError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store/{key}": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Retrieve the value of a key-value pair by its key.",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - the key does not exists, or was unset due timeout"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "store"
+        ],
+        "description": "Add an item to the top of the stack",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "404": {
+            "description": "Not found - the key does not exists, or was unset due timeout"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Stack": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "object",
+            "example": "success message"
+          },
+          "stackSize": {
+            "type": "integer",
+            "example": 10
+          },
+          "item": {
+            "type": "object",
+            "example": "some random example"
+          }
+        }
+      },
+      "EmptyStack": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "object",
+            "example": "Empty stack, could not retrieve an item from it"
+          }
+        }
+      },
+      "AddToStack": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "object",
+            "example": "some defined value to be added"
+          }
+        },
+        "required": [
+          "item"
+        ]
+      },
+      "AddToStackError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "object",
+            "example": "A valid value for \"item\" must be provided"
+          }
+        }
+      },
+      "AddToSore": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "example": "someKey"
+          },
+          "value": {
+            "type": "object",
+            "example": 10
+          },
+          "ttl": {
+            "type": "integer",
+            "example": "some random example"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ]
+      },
+      "Store": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "object",
+            "example": "the value stored with the given key"
+          }
+        }
+      },
+      "AddToStoreError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "object",
+            "example": "Validation error"
+          }
+        }
+      }
+    }
+  }
+}
