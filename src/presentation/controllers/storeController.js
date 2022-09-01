@@ -3,7 +3,6 @@ class StoreController {
         this.storage = storage
     }
 
-
     isNumeric(num) {
         return !isNaN(num)
     }

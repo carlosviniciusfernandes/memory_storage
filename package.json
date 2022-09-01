@@ -4,7 +4,7 @@
   "description": "Backend code challenge using ExpressJS",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node src/main/server.js",
     "test": "jest --verbose false"
   },
   "repository": {
