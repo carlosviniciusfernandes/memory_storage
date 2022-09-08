@@ -1,9 +1,9 @@
-const request = require('supertest');
-const app = require('../main/app');
-const inMemoryStack = require('../data/providers/stackProvider')
+import request from 'supertest';
+import app from '../main/app';
+import stack from '../data/providers/stackProvider';
 
 afterEach(() => {
-    inMemoryStack.clearStack()
+    stack.clearStack()
 })
 
 /* Get from stack use cases */
@@ -11,11 +11,11 @@ describe('When trying to retrieve an item', () => {
 
     describe('from a non-empty stack', () => {
         beforeEach(() => {
-            inMemoryStack.pushToStack('first item')
-            inMemoryStack.pushToStack('last item')
+            stack.pushToStack('first item')
+            stack.pushToStack('last item')
         })
         it('should return the last item and remove it from the stack', async () => {
-            response = await request(app).get('/stack')
+            const response = await request(app).get('/stack')
             expect(response.statusCode).toBe(200)
             expect(response.body.stackSize).toBe(1)
             expect(response.body.item).toBe('last item')
@@ -51,7 +51,7 @@ describe('When adding an item', () => {
 
     describe('to a non-empty stack', () => {
         beforeEach(() => {
-            inMemoryStack.pushToStack('existing item')
+            stack.pushToStack('existing item')
         })
 
         it('should pile up the new item to the stack', async () => {
