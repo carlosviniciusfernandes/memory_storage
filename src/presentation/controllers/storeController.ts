@@ -1,18 +1,23 @@
-class StoreController {
-    constructor(storage) {
+import { Store } from '../../data/interfaces/store'
+import { HttpRequest, HttpResponse } from '../protocols/http'
+
+export class StoreController {
+    private storage: Store
+
+    constructor(storage: Store) {
         this.storage = storage
     }
 
-    isNumeric(num) {
+    private isNumeric(num: any): boolean {
         return !isNaN(num)
     }
 
-    addToStore(req, res){
+    addToStore(req: HttpRequest, res: HttpResponse): HttpResponse {
         const key = req.body.key
         const value = req.body.value
         const ttl = req.body.ttl
 
-        if (key == null || !typeof key == 'string') {
+        if (key == null) {
             return res.status(400).json({"message": `Validation error. Make sure 'key' it is a valid string`})
         }
 
@@ -31,17 +36,17 @@ class StoreController {
         return res.status(200).json({"message": message})
     }
 
-    getFromStore(req, res){
+    getFromStore(req: HttpRequest, res: HttpResponse): HttpResponse {
         const key = req.params.key
         const value = this.storage.getFromStore(key)
         if (value !== undefined){
             return res.status(200).json({ "value": `${value}` })
         } else {
-            return res.status(404).json()
+            return res.status(404).json({})
         }
     }
 
-    deleteFromStore(req, res){
+    deleteFromStore(req: HttpRequest, res: HttpResponse): HttpResponse {
         const key = req.params.key
         const value = this.storage.getFromStore(key)
         if (value !== undefined){
@@ -50,9 +55,7 @@ class StoreController {
                 "message": `key-value pair {${key}: ${value}} has been unset from the store`,
             })
         } else {
-            return res.status(404).json()
+            return res.status(404).json({})
         }
     }
 }
-
-module.exports = StoreController

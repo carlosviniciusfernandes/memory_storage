@@ -1,6 +1,6 @@
-const request = require('supertest');
-const app = require('../main/app');
-const inMemoryStore = require('../data/providers/storeProvider')
+import request from 'supertest';
+import app from '../main/app';
+import store from '../data/providers/storeProvider';
 
 beforeEach(() => {
     jest.useFakeTimers()
@@ -9,7 +9,7 @@ beforeEach(() => {
 afterEach(() => {
     jest.runOnlyPendingTimers()
     jest.useRealTimers()
-    inMemoryStore.clearStore()
+    store.clearStore()
 })
 
 /* Add use cases */
@@ -95,7 +95,7 @@ describe('When getting a key-value from the store by its key', () => {
             value: 'testValue'
         }
         beforeEach(() => {
-            inMemoryStore.setToStore(data.key, data.value)
+            store.setToStore(data.key, data.value)
         })
 
         it('should return its value', async () => {
@@ -114,7 +114,7 @@ describe('When getting a key-value from the store by its key', () => {
             ttl: 10
         }
         beforeEach(() => {
-            inMemoryStore.setToStore(data.key, data.value)
+            store.setToStore(data.key, data.value, data.ttl)
         })
 
         it('should return its value within its TTL', async () => {
@@ -143,7 +143,7 @@ describe('When adding a key-value pair to the store', () => {
             value: 'testValueOld'
         }
         beforeEach(() => {
-            inMemoryStore.setToStore(oldData.key, oldData.value)
+            store.setToStore(oldData.key, oldData.value)
         })
 
         describe('and a TTL is not set for new value', () => {
@@ -188,7 +188,7 @@ describe('When adding a key-value pair to the store', () => {
             ttl: 10
         }
         beforeEach(() => {
-            inMemoryStore.setToStore(oldData.key, oldData.value, oldData.ttl)
+            store.setToStore(oldData.key, oldData.value, oldData.ttl)
         })
 
         describe('and a TTL is not set for new value', () => {
@@ -237,7 +237,7 @@ describe('When deleting a key-value by its key', () => {
         value: 'testValue'
     }
     beforeEach(() => {
-        inMemoryStore.setToStore(data.key, data.value)
+        store.setToStore(data.key, data.value)
     })
 
     it('should be deleted if it exists', async () => {

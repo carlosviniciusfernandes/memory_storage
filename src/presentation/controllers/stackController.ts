@@ -1,14 +1,20 @@
-class StackController {
-    constructor(storage) {
+import { Stack, item } from '../../data/interfaces/stack'
+import { HttpRequest, HttpResponse } from '../protocols/http'
+
+
+export class StackController {
+    private storage: Stack
+
+    constructor(storage: Stack) {
         this.storage = storage
     }
 
-    isItemValid(item) {
+    private isItemValid(item: item): boolean {
         return !(item == null)
     }
 
-    addToStack(req, res) {
-        const item = req.body.item
+    addToStack(req: HttpRequest, res: HttpResponse): HttpResponse {
+        const item: item = req.body.item
         if (this.isItemValid(item)) {
             this.storage.pushToStack(item)
             return res.status(200).json({
@@ -23,7 +29,7 @@ class StackController {
         }
     }
 
-    getFromStack(req, res) {
+    getFromStack(req: HttpRequest | void, res: HttpResponse): HttpResponse {
         if (this.storage.getStackSize() > 0) {
             const item = this.storage.popFromStack()
             return res.status(200).json({
@@ -39,5 +45,3 @@ class StackController {
     }
 
 }
-
-module.exports = StackController
