@@ -1,7 +1,9 @@
 import { Store, value } from "../interfaces/store"
 
+type Typeout = ReturnType<typeof setTimeout>
+
 type keyValue = { [key: string]: any }
-type keyNumber = { [key: string]: number }
+type keyTTL = { [key: string]: Typeout }
 
 /*
     In Memory Singleton for the Key-value pair storage
@@ -9,7 +11,7 @@ type keyNumber = { [key: string]: number }
 class InMemoryStore implements Store {
     private static instance: InMemoryStore
     private valueStore: keyValue
-    private ttlStore: keyNumber
+    private ttlStore: keyTTL
 
     private constructor() {
         this.valueStore = {}
@@ -23,22 +25,16 @@ class InMemoryStore implements Store {
         return this.instance
     }
 
-    private checkTTL(key: string, ttlStore: keyNumber, valueStore: keyValue): void {
-        ttlStore[key] = ttlStore[key] - 1
-        if (ttlStore[key] <= 0) {
-            delete valueStore[key]
-            delete ttlStore[key]
-        }
-    }
-
-    private setTTL(key: string, ttl: number): void {
-        this.ttlStore[key] = ttl
-        setInterval(this.checkTTL, 1000, key, this.ttlStore, this.valueStore);
-    }
-
     setToStore(key: string, value: value, ttl: number | null = null): void {
         this.valueStore[key] = value
-        if (ttl) this.setTTL(key, ttl)
+
+        clearTimeout(this.ttlStore[key])
+        delete this.ttlStore[key]
+
+        if (ttl) {
+            const timeout = setTimeout(() => delete this.valueStore[key], ttl*1000)
+            this.ttlStore[key] = timeout
+        }
     }
 
     getFromStore(key: string): value {

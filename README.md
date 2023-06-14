@@ -1,4 +1,4 @@
-# README
+# Memory Storage
 
 This is a backend code challenge to build a simple API developed using the ExpressJS framework
 
@@ -144,8 +144,3 @@ responses:
 ## Running Tests
 The tests are using `Jest` as the test runner. To run the test, execute the following command:
 > npm test
-
----
-## Next Steps
-- Use of TypeScript
-- Create interfaces for the memory storage providers to be used by the controllers

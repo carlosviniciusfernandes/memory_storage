@@ -203,6 +203,12 @@ describe('When adding a key-value pair to the store', () => {
                     .send(newData)
                     .set('Accept', 'application/json')
                 expect(response.statusCode).toBe(200)
+
+                jest.advanceTimersByTime(oldData.ttl*1000)
+                response = await request(app)
+                    .get(`/store/${newData.key}`)
+                    .set('Accept', 'application/json')
+                expect(response.statusCode).toBe(200)
             })
 
 
@@ -217,10 +223,24 @@ describe('When adding a key-value pair to the store', () => {
                     ttl: 20
                 }
                 let response = await request(app)
-                .post('/store/add')
-                .send(newData)
-                .set('Accept', 'application/json')
+                    .post('/store/add')
+                    .send(newData)
+                    .set('Accept', 'application/json')
                 expect(response.statusCode).toBe(200)
+
+                // Time to live is overwritten with a high value,
+                // lasting longer on the store
+                jest.advanceTimersByTime(oldData.ttl*1000)
+                response = await request(app)
+                    .get(`/store/${newData.key}`)
+                    .set('Accept', 'application/json')
+                expect(response.statusCode).toBe(200)
+
+                jest.advanceTimersByTime(oldData.ttl*1000)
+                response = await request(app)
+                    .get(`/store/${newData.key}`)
+                    .set('Accept', 'application/json')
+                expect(response.statusCode).toBe(404)
             })
 
         })
