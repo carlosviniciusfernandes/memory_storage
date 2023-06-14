@@ -1,4 +1,4 @@
-import { Store, value } from "../interfaces/store"
+import { Store, value } from "./store"
 
 type Typeout = ReturnType<typeof setTimeout>
 

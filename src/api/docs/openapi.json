@@ -1,10 +1,10 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "TMG NodeJS Test",
-    "description": "This is a backend code challenge to build a simple API developed using the ExpressJS framework",
+    "title": "Memory Store",
+    "description": "This is a simple REST API developed using the ExpressJS for in-memory data storage",
     "contact": {
-      "email": "carlos.fernandes@pyyne.com"
+      "email": "carlos.vinicius.fernandes@gmail.com"
     },
     "license": {
       "name": "MIT"
@@ -250,7 +250,7 @@
           },
           "ttl": {
             "type": "integer",
-            "example": "some random example"
+            "example": 60
           }
         },
         "required": [

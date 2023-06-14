@@ -1,14 +1,14 @@
 import { Router, Express } from 'express'
 import swaggerUi from 'swagger-ui-express'
 
-import swaggerDocument from '../presentation/openapi.json'
-import store from '../data/providers/storeProvider'
-import stack from '../data/providers/stackProvider'
-import { StackController } from '../presentation/controllers/stackController'
-import { StoreController } from '../presentation/controllers/storeController'
+import stack from '../core/stack/stackProvider'
+import store from '../core/store/storeProvider'
+import { StackController } from './controllers/stackController'
+import { StoreController } from './controllers/storeController'
+import swaggerDocument from './docs/openapi.json'
 
 export default (app: Express): void => {
-    const router = Router();
+    const router = Router()
     const stackController = new StackController(stack)
     const storeController = new StoreController(store)
 
@@ -22,7 +22,7 @@ export default (app: Express): void => {
     router.delete('/store/:key', (req, res) => { storeController.deleteFromStore(req, res) })
 
     // Swager API Documentation
-    router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    router.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     app.use('', router)
 }

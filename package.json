@@ -4,8 +4,8 @@
   "description": "Backend code challenge using ExpressJS",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/main/server.ts",
-    "test": "jest --verbose false"
+    "start": "ts-node src/api/server.ts",
+    "test": "jest --verbose --coverage"
   },
   "repository": {
     "type": "git",

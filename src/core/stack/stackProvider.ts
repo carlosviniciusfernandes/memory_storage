@@ -1,4 +1,4 @@
-import { Stack, item } from "../interfaces/stack"
+import { Stack, item } from "./stack"
 
 /*
     In Memory Singleton for the LIFO stack

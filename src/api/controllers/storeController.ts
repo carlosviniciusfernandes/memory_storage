@@ -1,4 +1,4 @@
-import { Store } from '../../data/interfaces/store'
+import { Store } from '../../core/store/store'
 import { HttpRequest, HttpResponse } from '../protocols/http'
 
 export class StoreController {

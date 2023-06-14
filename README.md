@@ -1,9 +1,8 @@
 # Memory Storage
 
-This is a backend code challenge to build a simple API developed using the ExpressJS framework
+This project is based on **TMG Node Challenge** that I did in 2022. It consists of in memory storage system support LIFO stacks and a key-value store with a TTL feature.
 
-The original challenge description is in the file _challenge_description.md_
- > https://github.com/carlosviniciusfernandes/tmg_nodejs_test/blob/master/challenge_description.md
+Original challenge description <a href='./original_challenge.md'>here</a>.
 
 ---
 ## Installation
@@ -11,25 +10,35 @@ The installation of the is done by executing the following commands:
 
 > npm install
 
-__NOTE__: You can use other node package managers like `Yarn`, but for simplicity `NPM` is used here as example
+__NOTE__: You can use other node package managers like `Yarn`, but for simplicity `NPM` is used here as example.
 
 ---
-## The API
-The API operates on two unrelated pieces of functionality, one is a in memory stack, and the other a key-value in memory store. Both of them are not persisted, so be aware that data is lost when the application is turned down or restarted.
 
-### Design
+## Design
 
-The design choices was to go with a simple approach, with two separate controllers for the distinct pieces of memory storage functionality.
+The projects is structured in a very simple manner, with two main modules for storage (`stack` and `store`) under the application `core`. Those modules stores data in singleton instances when the application is running, and are injected into their respective controller for the REST API. Data is not persisted, so be aware that data is lost when the application is turned down or restarted.
 
-The data itself is stored on the instances of `InMemoryStack` and `InMemoryStore` classes during run time, working like a Singleton like objects.
+```
+src/
++--api/
+   +--controllers/
+      +--stackController.ts
+      +--storeController.ts
++--core/
+   +--stack/
+   +--store/
+```
 
-For the key-value memory storage, an additional object was created to store the optional _Time To Live_ (TTL). Once something is stored with a valid TTL, a routine will run every one second, subtract a second from the TTL and check if its reached zero, then unset the value from the storage if needed.
+### Stack
 
-<img src="./class_diagram.png" alt="Class Diagram"/>
+The `stack` is a **Last In First Out** data structure. On a lower level it operates using a simple array structure for keeping track of data.
+### Store
+
+The `store` is a **key-value** data struture with a **TTL** feature. On a lower level it operates using 2 hashmaps using the objects' key, one for storing the actual value, and the other for storing the timeout object. This way it is possible to clear and/or overwrite the timeouts for each item.
 
 
-### Serving the Express APP
-To start the app, run the following command:
+## REST API
+To start the express app, run the following command:
 
 > npm start
 
@@ -37,7 +46,7 @@ this will expose the API to the address http://localhost:3000
 
 ### API Endpoints
 
-There are 5 exposed endpoints. Those are also documented using swagger, with the API running check http://localhost:3000/api-docs
+There are 5 exposed endpoints. Those are also documented using swagger, with the API running check http://localhost:3000/api/docs
 
 #### Stack
 Get from stack
@@ -141,6 +150,11 @@ responses:
 ```
 
 ---
-## Running Tests
+## Tests
 The tests are using `Jest` as the test runner. To run the test, execute the following command:
 > npm test
+
+---
+## TODOs
+
+- Add a command line interface alternative for the interacting with the application

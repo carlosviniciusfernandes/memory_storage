@@ -1,6 +1,5 @@
-import { Stack, item } from '../../data/interfaces/stack'
+import { Stack, item } from '../../core/stack/stack'
 import { HttpRequest, HttpResponse } from '../protocols/http'
-
 
 export class StackController {
     private storage: Stack
