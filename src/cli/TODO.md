@@ -1,5 +1,7 @@
 # CLI
 
-create a command line interface that
-- starts the apllication and getting the singleton instances of stack and store from the core, and creating a main loop waiting for shell commands
-- implement respective commands for stack and store usage for the shell
+- add CLI tests
+- implement help description
+- break store and stack commands into commands with subcommands, with their own helpers
+- update the shell to be an instance that register commands, each command having their own argparser and possible having their own subcommands
+- bonus: figure out how to parse correctly an input with "scaped spaces"
