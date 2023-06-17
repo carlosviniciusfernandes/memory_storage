@@ -1,7 +1,4 @@
 import request from 'supertest';
-// import app from '../main/app';
-// import store from '../data/providers/storeProvider';
-
 
 import app from '../api/app';
 import store from '../core/store/storeProvider';

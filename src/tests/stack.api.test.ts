@@ -1,6 +1,4 @@
 import request from 'supertest';
-// import app from '../main/app';
-// import stack from '../data/providers/stackProvider';
 
 import app from '../api/app';
 import stack from '../core/stack/stackProvider';
